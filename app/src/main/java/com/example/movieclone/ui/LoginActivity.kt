@@ -20,7 +20,7 @@ class LoginActivity : AppCompatActivity() {
 
         loginButton.setOnClickListener {
             // Basic login logic (replace with actual authentication)
-            if (username.text.toString() == "ez" && password.text.toString() == "12345") {
+            if (username.text.toString() == "e" && password.text.toString() == "1") {
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                 // Navigate to next activity or dashboard
                 startActivity(Intent(this, DashboardActivity::class.java))

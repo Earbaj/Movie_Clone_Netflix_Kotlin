@@ -6,6 +6,8 @@ import retrofit2.Response
 import androidx.lifecycle.MutableLiveData
 import com.example.movieclone.data.Movie
 import com.example.movieclone.data.MovieResponse
+import com.example.movieclone.data.UpcomingMoviesResponse
+import com.example.movieclone.data.UpcommingMovie
 import com.example.movieclone.services.RetrofitInstance
 
 class MovieRepository {
@@ -31,4 +33,27 @@ class MovieRepository {
 
         return moviesData
     }
+
+    fun getUpcomingMovies(apiKey: String): MutableLiveData<List<UpcommingMovie>> {
+        val moviesData = MutableLiveData<List<UpcommingMovie>>()
+
+        apiService.getUpcomingMovies(apiKey).enqueue(object : Callback<UpcomingMoviesResponse> {
+            override fun onResponse(call: Call<UpcomingMoviesResponse>, response: Response<UpcomingMoviesResponse>) {
+                if (response.isSuccessful && response.body() != null) {
+                    moviesData.value = response.body()!!.results
+                } else {
+                    moviesData.value = emptyList()
+                }
+            }
+
+            override fun onFailure(call: Call<UpcomingMoviesResponse>, t: Throwable) {
+                // Handle failure, could set to empty list or handle errors appropriately
+                moviesData.value = emptyList()
+            }
+        })
+
+        return moviesData
+    }
+
+
 }

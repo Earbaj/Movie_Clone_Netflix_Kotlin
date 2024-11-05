@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movieclone.R
 import com.example.movieclone.adapter.MovieAdapter
+import com.example.movieclone.adapter.UpcomingMovieAdapter
 import com.example.movieclone.data.Movie
 import com.example.movieclone.data.MovieResponse
+import com.example.movieclone.data.UpcommingMovie
 import com.example.movieclone.services.RetrofitInstance
 import com.example.movieclone.viewmodel.MovieViewModel
 import retrofit2.Response
@@ -31,70 +35,72 @@ private const val ARG_PARAM2 = "param2"
  */
 class HomeFragment : Fragment() {
 
-//    private lateinit var recyclerView: RecyclerView
-//    private lateinit var adapter: MovieAdapter
-//    private val movieList = mutableListOf<Movie>()
-
     private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerViewUpcoming: RecyclerView
     private lateinit var adapter: MovieAdapter
+    private lateinit var adapter_upcoming_novie: UpcomingMovieAdapter
     private val movieViewModel: MovieViewModel by viewModels()
     private val movieList = mutableListOf<Movie>()
+    private val upcomingMovieList = mutableListOf<UpcommingMovie>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_home, container, false)
-//
-//        recyclerView = view.findViewById(R.id.recyclerView)
-//        recyclerView.layoutManager = LinearLayoutManager(context)
-//        adapter = MovieAdapter(movieList)
-//        recyclerView.adapter = adapter
-//
-//        fetchMovies()
-//
-//        return view
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        // Initialize recyclerView first
         recyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerViewUpcoming = view.findViewById(R.id.recyclerView_upcoming)
+
+        // Set up the RecyclerView's layout manager and animator after initialization
+        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewUpcoming.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+
+        // Set up item animator for animation
+        recyclerView.itemAnimator = DefaultItemAnimator().apply {
+            addDuration = 500 // Adjust duration as needed
+            removeDuration = 500
+        }
+
+        // Set up adapter
         adapter = MovieAdapter(movieList)
         recyclerView.adapter = adapter
 
+        adapter_upcoming_novie = UpcomingMovieAdapter(upcomingMovieList)
+        recyclerViewUpcoming.adapter = adapter_upcoming_novie
+
+        // Observe the ViewModel's LiveData for movie list updates
         observeMovies()
+
+        // Fetch movies from the API
         fetchMovies()
+        fetchUpcomingMovies()
 
         return view
     }
 
-//    private fun fetchMovies() {
-//        val apiKey = "7502b8c031c79790fe5c0b4f94fd770d" // replace with actual API key
-//        RetrofitInstance.api.getPopularMovies(apiKey).enqueue(object : Callback<MovieResponse> {
-//            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
-//                if (response.isSuccessful && response.body() != null) {
-//                    movieList.clear()
-//                    movieList.addAll(response.body()!!.results)
-//                    adapter.notifyDataSetChanged()
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
-//                // Handle failure
-//            }
-//        })
-//    }
-private fun observeMovies() {
-    movieViewModel.movies.observe(viewLifecycleOwner, Observer { movies ->
-        movieList.clear()
-        movieList.addAll(movies)
-        adapter.notifyDataSetChanged()
-    })
-}
+    private fun observeMovies() {
+        movieViewModel.movies.observe(viewLifecycleOwner, Observer { movies ->
+            movieList.clear()
+            movieList.addAll(movies)
+            adapter.notifyDataSetChanged()
+        })
+        movieViewModel.upcoming_movies.observe(viewLifecycleOwner, Observer { upcoming_movies ->
+            upcomingMovieList.clear()
+            upcomingMovieList.addAll(upcoming_movies)
+            adapter_upcoming_novie.notifyDataSetChanged()
+        })
+    }
 
     private fun fetchMovies() {
         val apiKey = "7502b8c031c79790fe5c0b4f94fd770d" // replace with actual API key
         movieViewModel.fetchMovies(apiKey)
     }
-
+    private fun fetchUpcomingMovies() {
+        val apiKey = "7502b8c031c79790fe5c0b4f94fd770d" // replace with actual API key
+        movieViewModel.fetchUpcomingMovies(apiKey)
+    }
 }

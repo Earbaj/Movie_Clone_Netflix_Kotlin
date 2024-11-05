@@ -47,7 +47,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.fragment:fragment-ktx:1.5.2")
-
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.cardview:cardview:1.0.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)

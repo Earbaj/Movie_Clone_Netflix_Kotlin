@@ -9,21 +9,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.movieclone.R
 import com.example.movieclone.data.Movie
+import com.example.movieclone.data.UpcommingMovie
 
-class MovieAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+class UpcomingMovieAdapter(private val movies: List<UpcommingMovie>) : RecyclerView.Adapter<UpcomingMovieAdapter.UcomingMovieViewHolder>() {
 
-    class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class UcomingMovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val poster: ImageView = view.findViewById(R.id.imageView)
         val titleTextView: TextView = view.findViewById(R.id.titleTextView)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
-        return MovieViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UcomingMovieViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_upcomming, parent, false)
+        return UcomingMovieViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: UcomingMovieViewHolder, position: Int) {
         val movie = movies[position]
 
         holder.titleTextView.text = movie.title
@@ -33,7 +34,7 @@ class MovieAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<Movie
 
     override fun getItemCount() = movies.size
 
-    override fun onViewAttachedToWindow(holder: MovieViewHolder) {
+    override fun onViewAttachedToWindow(holder: UcomingMovieViewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.itemView.alpha = 0f
         holder.itemView.animate()
