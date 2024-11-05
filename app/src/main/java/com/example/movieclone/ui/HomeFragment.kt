@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,7 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewUpcoming: RecyclerView
     private lateinit var adapter: MovieAdapter
+    private lateinit var progressBar: ProgressBar
     private lateinit var adapter_upcoming_novie: UpcomingMovieAdapter
     private val movieViewModel: MovieViewModel by viewModels()
     private val movieList = mutableListOf<Movie>()
@@ -53,7 +55,7 @@ class HomeFragment : Fragment() {
         // Initialize recyclerView first
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerViewUpcoming = view.findViewById(R.id.recyclerView_upcoming)
-
+        progressBar =  view.findViewById(R.id.progressBar)
         // Set up the RecyclerView's layout manager and animator after initialization
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerViewUpcoming.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -83,16 +85,26 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeMovies() {
+        progressBar.visibility = View.VISIBLE
         movieViewModel.movies.observe(viewLifecycleOwner, Observer { movies ->
             movieList.clear()
             movieList.addAll(movies)
             adapter.notifyDataSetChanged()
+            // Hide ProgressBar only after upcoming movies are loaded
+            if (movieList.isNotEmpty()) {
+                progressBar.visibility = View.GONE
+            }
         })
         movieViewModel.upcoming_movies.observe(viewLifecycleOwner, Observer { upcoming_movies ->
             upcomingMovieList.clear()
             upcomingMovieList.addAll(upcoming_movies)
             adapter_upcoming_novie.notifyDataSetChanged()
+            // Hide ProgressBar only after movies are loaded
+            if (upcomingMovieList.isNotEmpty()) {
+                progressBar.visibility = View.GONE
+            }
         })
+
     }
 
     private fun fetchMovies() {
