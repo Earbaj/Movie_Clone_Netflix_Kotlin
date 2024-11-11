@@ -6,6 +6,8 @@ import retrofit2.Response
 import androidx.lifecycle.MutableLiveData
 import com.example.movieclone.data.Movie
 import com.example.movieclone.data.MovieResponse
+import com.example.movieclone.data.PopularMovie
+import com.example.movieclone.data.PopularMoviesResponse
 import com.example.movieclone.data.UpcomingMoviesResponse
 import com.example.movieclone.data.UpcommingMovie
 import com.example.movieclone.services.RetrofitInstance
@@ -47,6 +49,28 @@ class MovieRepository {
             }
 
             override fun onFailure(call: Call<UpcomingMoviesResponse>, t: Throwable) {
+                // Handle failure, could set to empty list or handle errors appropriately
+                moviesData.value = emptyList()
+            }
+        })
+
+        return moviesData
+    }
+
+
+    fun getPopularMoviesNew(apiKey: String): MutableLiveData<List<PopularMovie>> {
+        val moviesData = MutableLiveData<List<PopularMovie>>()
+
+        apiService.getPopularMoviesNew(apiKey).enqueue(object : Callback<PopularMoviesResponse> {
+            override fun onResponse(call: Call<PopularMoviesResponse>, response: Response<PopularMoviesResponse>) {
+                if (response.isSuccessful && response.body() != null) {
+                    moviesData.value = response.body()!!.results
+                } else {
+                    moviesData.value = emptyList()
+                }
+            }
+
+            override fun onFailure(call: Call<PopularMoviesResponse>, t: Throwable) {
                 // Handle failure, could set to empty list or handle errors appropriately
                 moviesData.value = emptyList()
             }

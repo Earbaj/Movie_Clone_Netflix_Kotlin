@@ -1,6 +1,7 @@
 package com.example.movieclone.services
 
 import com.example.movieclone.data.MovieResponse
+import com.example.movieclone.data.PopularMoviesResponse
 import com.example.movieclone.data.UpcomingMoviesResponse
 import com.example.movieclone.data.UpcommingMovie
 import retrofit2.Call
@@ -19,5 +20,11 @@ interface MovieApiService {
         @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1
     ): Call<UpcomingMoviesResponse>
+
+    @GET("movie/popular")
+    fun getPopularMoviesNew(
+        @Query("api_key") apiKey: String,
+        @Query("page") page: Int = 1
+    ): Call<PopularMoviesResponse>
 
 }

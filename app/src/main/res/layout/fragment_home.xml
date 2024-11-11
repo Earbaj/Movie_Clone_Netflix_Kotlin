@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.HomeFragment">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_marginBottom="100dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,8 +48,25 @@
             android:layout_marginTop="10dp"
             android:clipToPadding="false"/>
 
-    </LinearLayout>
+        <TextView
+            android:text="Popular"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_popular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp"
+            android:clipToPadding="false"/>
+
+    </LinearLayout>
+    </ScrollView>
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.example.movieclone.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,9 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movieclone.R
 import com.example.movieclone.adapter.MovieAdapter
+import com.example.movieclone.adapter.PopularMovieAdapter
 import com.example.movieclone.adapter.UpcomingMovieAdapter
 import com.example.movieclone.data.Movie
 import com.example.movieclone.data.MovieResponse
+import com.example.movieclone.data.PopularMovie
 import com.example.movieclone.data.UpcommingMovie
 import com.example.movieclone.services.RetrofitInstance
 import com.example.movieclone.viewmodel.MovieViewModel
@@ -38,13 +41,17 @@ class HomeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewUpcoming: RecyclerView
+    private lateinit var recyclerViewPopular: RecyclerView
     private lateinit var adapter: MovieAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter_upcoming_novie: UpcomingMovieAdapter
+    private lateinit var adapter_popular_novie: PopularMovieAdapter
     private val movieViewModel: MovieViewModel by viewModels()
     private val movieList = mutableListOf<Movie>()
     private val upcomingMovieList = mutableListOf<UpcommingMovie>()
+    private val popularMovieList = mutableListOf<PopularMovie>()
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,10 +62,13 @@ class HomeFragment : Fragment() {
         // Initialize recyclerView first
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerViewUpcoming = view.findViewById(R.id.recyclerView_upcoming)
+        recyclerViewPopular = view.findViewById(R.id.recyclerView_popular)
+
         progressBar =  view.findViewById(R.id.progressBar)
         // Set up the RecyclerView's layout manager and animator after initialization
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerViewUpcoming.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewPopular.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
 
         // Set up item animator for animation
@@ -74,12 +84,15 @@ class HomeFragment : Fragment() {
         adapter_upcoming_novie = UpcomingMovieAdapter(upcomingMovieList)
         recyclerViewUpcoming.adapter = adapter_upcoming_novie
 
+        adapter_popular_novie = PopularMovieAdapter(popularMovieList)
+        recyclerViewPopular.adapter = adapter_popular_novie
         // Observe the ViewModel's LiveData for movie list updates
         observeMovies()
 
         // Fetch movies from the API
         fetchMovies()
         fetchUpcomingMovies()
+        fetchPopularMovies()
 
         return view
     }
@@ -104,6 +117,15 @@ class HomeFragment : Fragment() {
                 progressBar.visibility = View.GONE
             }
         })
+        movieViewModel.popular_movies.observe(viewLifecycleOwner, Observer { popular_movies ->
+            popularMovieList.clear()
+            popularMovieList.addAll(popular_movies)
+            adapter_popular_novie.notifyDataSetChanged()
+            // Hide ProgressBar only after movies are loaded
+            if (popularMovieList.isNotEmpty()) {
+                progressBar.visibility = View.GONE
+            }
+        })
 
     }
 
@@ -114,5 +136,9 @@ class HomeFragment : Fragment() {
     private fun fetchUpcomingMovies() {
         val apiKey = "7502b8c031c79790fe5c0b4f94fd770d" // replace with actual API key
         movieViewModel.fetchUpcomingMovies(apiKey)
+    }
+    private fun fetchPopularMovies() {
+        val apiKey = "7502b8c031c79790fe5c0b4f94fd770d" // replace with actual API key
+        movieViewModel.fetchPopularMovies(apiKey)
     }
 }
